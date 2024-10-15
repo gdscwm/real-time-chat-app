@@ -36,6 +36,10 @@ HTMX is perfect for beginners because it lets you create dynamic web pages using
 
 This stack (Go + Fiber + HTMX) works great for developers looking to build high-performance, scalable web applications with a lean front-end approach, leveraging server-side rendering and minimal client-side JavaScript. Basically, Go and Fiber handle the server-side logic, while HTMX makes your front-end interactive with minimal effort.
 
+**For a more thorough breakdown of these technologies, watch the following brief videos:**
+- [Go in 100 seconds](https://www.youtube.com/watch?v=446E-r0rXHI)
+- [HTMX in 100 seconds](https://www.youtube.com/watch?v=r-GSGH2RxJs)
+
 By the end of this workshop, you'll have created a reactive frontend without JavaScript and learned how to leverage Fiber's versatility with WebSockets.
 
 ## Prerequisites
