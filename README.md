@@ -311,6 +311,8 @@ func (a *AppHandler) HandleGetIndex(ctx *fiber.Ctx) error {
 }
 ```
 
+In the code above, we created a handler which received the `AppHandler` struct. This helps with abstractions in case the code gets bigger. The `HandleGetIndex` function takes in a pointer to the Fiber context and renders the `index.html` file.
+
 Update `main.go` to use the new handler:
 
 ```go
@@ -318,9 +320,13 @@ appHandler := handlers.NewAppHandler()
 app.Get("/", appHandler.HandleGetIndex)
 ```
 
+Above, we created a new app handler and added the `HandleGetIndex` function in the routes. Run the `go run main.go` command. On `localhost:3000`, you should have a screen similar to this:
+
+![input box, send button, and chat display area on localhost:3000](https://www.freecodecamp.org/news/content/images/2024/06/chat-room-cropped.png)
+
 ## 6. Creating the Message Structure
 
-Create a `message.go` file:
+Create a new file in the project directly and name it message.go. This is how it should look:
 
 ```go
 package main
@@ -330,21 +336,122 @@ type Message struct {
 }
 ```
 
+This file will host the message struct.
+
 ## 7. Implementing WebSocket Functionality
 
-Create a `websocket.go` file to handle WebSocket connections and message broadcasting[1].
+Create a new file in the project directory and name it `websocket.go`. This will house the main function creating the WebSocket server, reading through it and writing to all channels:
+
+```go
+package main
+
+import (
+    "bytes"
+    "encoding/json"
+    "html/template"
+    "log"
+
+    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/websocket/v2"
+)
+
+type WebSocketServer struct {
+    clients   map[*websocket.Conn]bool
+    broadcast chan *Message
+}
+
+func NewWebSocket() *WebSocketServer {
+    return &WebSocketServer{
+        clients:   make(map[*websocket.Conn]bool),
+        broadcast: make(chan *Message),
+    }
+}
+
+
+func (s *WebSocketServer) HandleWebSocket(ctx *websocket.Conn) {
+
+    // Register a new Client
+    s.clients[ctx] = true
+    defer func() {
+        delete(s.clients, ctx)
+        ctx.Close()
+    }()
+
+    for {
+        _, msg, err := ctx.ReadMessage()
+        if err != nil {
+            log.Println("Read Error:", err)
+            break
+        }
+
+        // send the message to the broadcast channel
+        var message Message
+        if err := json.Unmarshal(msg, &message); err != nil {
+            log.Fatalf("Error Unmarshalling")
+        }
+        s.broadcast <- &message
+    }
+}
+
+func (s *WebSocketServer) HandleMessages() {
+    for {
+        msg := <-s.broadcast
+
+        // Send the message to all Clients
+
+        for client := range s.clients {
+            err := client.WriteMessage(websocket.TextMessage, getMessageTemplate(msg))
+            if err != nil {
+                log.Printf("Write  Error: %v ", err)
+                client.Close()
+                delete(s.clients, client)
+            }
+
+        }
+
+    }
+}
+
+func getMessageTemplate(msg *Message) []byte {
+    tmpl, err := template.ParseFiles("views/message.html")
+    if err != nil {
+        log.Fatalf("template parsing: %s", err)
+    }
+
+    // Render the template with the message as data.
+    var renderedMessage bytes.Buffer
+    err = tmpl.Execute(&renderedMessage, msg)
+    if err != nil {
+        log.Fatalf("template execution: %s", err)
+    }
+
+    return renderedMessage.Bytes()
+}
+```
+
+The `HandleWebSocket` function adds the client, processes the messages into JSON and then adds the message into a channel for distribution to all clients by `HandleMessage`.
+
+It also keeps the connection alive. `getMessageTemplate` basically process the message into the `message.html`, and then converts it to a byte. This byte can then be sent to the client as a response.
 
 ## 8. Integrating WebSocket with Routes and HTMX
 
 Update `main.go` to include WebSocket routes:
 
 ```go
-server := NewWebSocket()
-app.Get("/ws", websocket.New(func(ctx *websocket.Conn) {
-    server.HandleWebSocket(ctx)
-}))
-go server.HandleMessages()
+    // create new webscoket <--here!
+    server := NewWebSocket()
+    app.Get("/ws", websocket.New(func(ctx *websocket.Conn) {
+        server.HandleWebSocket(ctx)
+    }))
+
+    go server.HandleMessages()
+
+    // Start the http server
+    app.Listen(":3000")
+}
 ```
+
+The WebSocket and its route has been added. The final step is to add the HTMX tags on the index.html file.
 
 Modify `index.html` to include HTMX WebSocket attributes:
 
@@ -358,6 +465,14 @@ Modify `index.html` to include HTMX WebSocket attributes:
     </form>
 </div>
 ```
+
+The `hx-ext` tag and `ws-connect` tag point to the WebSocket URL `/ws`. The `hx-swap` tag was used to perform DOM manipulations which adds our messages into the `#messages` div.
+
+After saving this, run `go run main.go`. You can open two different browser windows at `localhost:3000`:
+
+![two browser windows used for sending and receiving messages](https://www.freecodecamp.org/news/content/images/2024/06/Screenshot-from-2024-06-02-04-23-06.png)
+
+If the WebSocket is running perfectly, you should be able to send and receive messages from the two browsers in real-time as displayed in the picture.
 
 ## Running the Application
 
@@ -378,3 +493,5 @@ Feel free to extend this project by adding features like user authentication, mu
 ## Acknowledgments
 
 Thanks to FreeCodeCamp for providing the template to this workshop [here](https://www.freecodecamp.org/news/real-time-chat-with-go-fiber-htmx/)!
+
+You can visit the original project repo here: github.com/steelthedev/go-chat
