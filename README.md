@@ -60,7 +60,11 @@ By the end of this workshop, you'll have created a reactive frontend without Jav
 
 ## 1. Project Setup
 
-Create a new folder named `go-chat` and initialize your Go module:
+First, install Go by going to this link [here](https://go.dev/doc/install).
+
+Make sure you select the tab for your computer's operating system below, then follow its specific installation instructions.
+
+After you have verified Go is installed, create a new folder named `go-chat` and initialize your Go module:
 
 ```bash
 mkdir go-chat
