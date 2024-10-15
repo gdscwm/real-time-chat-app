@@ -78,6 +78,8 @@ go get -u github.com/gofiber/websocket/v2
 go get -u github.com/gofiber/template/html/v2
 ```
 
+These will install Fiber and other components such as WebSocket and HTML templating library.
+
 ## 3. Creating the Main Application
 
 Create a `main.go` file in the root directory with a basic Fiber server:
@@ -88,29 +90,206 @@ package main
 import "github.com/gofiber/fiber/v2"
 
 func main() {
+    // Start new fiber instance
     app := fiber.New()
-    
-    app.Get("/ping", func(ctx *fiber.Ctx) error {
+
+    // Create a "ping" handler to test the server
+    app.Get("/ping", func(ctx *fiber.Ctx) error{
         return ctx.SendString("Welcome to fiber")
     })
-    
+
+    // Start the http server
     app.Listen(":3000")
 }
 ```
 
-## 4. Setting Up Static Files
+This file will be the entry point to the application, in which inside the file we just created a simple web server.
 
-Create `static` and `views` folders. In the `views` folder, create `index.html` and `messages.html`. In the `static` folder, create `style.css`[1].
+Save the file and run `go run main.go` in the terminal to start the web server.
 
-Update `main.go` to handle static files:
+![_go run command starting the web server_](https://www.freecodecamp.org/news/content/images/2024/06/tuts1-cropped.png)
+
+If you head over to the browser and test the /ping route, there should be a response like this:
+
+
+![_/ping route in the browser_](https://www.freecodecamp.org/news/content/images/2024/06/welcome-to-fiber-cropped.png)
+
+## 4a. Setting Up Static Files
+
+We'll need static files such as CSS and HTML files for the application to function.
+
+Create `static` and `views` folders. In the `views` folder, create `index.html` and `messages.html`. Here's what the index.html file should look like:
+
+### index.html
+
+Here's what the `index.html` file should look like:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Room</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"
+        integrity="sha384-D1Kt99CQMDuVetoL1lrYwg5t+9QdHe7NLX/SoJYkXDFfX37iInKRy5xLSi8nO7UC"
+        crossorigin="anonymous"></script>
+    <!-- HTMX Websockets extension https://htmx.org/extensions/web-sockets/ -->
+    <script src="https://unpkg.com/htmx.org/dist/ext/ws.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="chat-window">
+            <div class="messages" id="messages" >
+                <!-- Messages will be appended here -->
+            </div>
+            <form id="form">
+                <div class="input-area">
+                    <input type="text" name="text" min="1" id="messageInput" placeholder="Type a message...">
+                    <button type="submit">Send</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
+```
+
+In the `index.html` above, we have linked the necessary plugins such as our `style.css` which will soon be created, HTMX and bootstrap 5.
+
+### message.html
+
+Here's what the `message.html` file should look like:
+
+```html
+<div id="messages" hx-swap-oob="beforeend">
+    <p class="text-small">{{ .Text }}</p>
+</div>
+```
+
+This message will be the response from the server, it will be swapped into our `index.html` code automatically in the browser with the help of HTMX.
+
+### style.css
+
+Now, create a new folder named `static`. Inside it, create a new file `style.css`:
+
+```css
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.chat-window {
+    width: 400px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.messages {
+    padding: 10px;
+    overflow-y: scroll;
+    height: 300px;
+}
+
+.message {
+    margin-bottom: 10px;
+}
+
+.message p {
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    padding: 5px 10px;
+    display: inline-block;
+    max-width: 80%;
+}
+
+.input-area {
+    padding: 10px;
+    display: flex;
+}
+
+.input-area input[type="text"] {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.input-area button {
+    padding: 8px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.input-area button:hover {
+    background-color: #45a049;
+}
+
+.input-area button:active {
+    background-color: #3e8e41;
+}
+```
+
+## 4b. Configuring Static Files
+
+In your `main.go` file, you need to tell Fiber how to handle your static files, most especially the folder to check for HTML rendering. Update main.go as follow:
 
 ```go
-viewsEngine := html.New("./views", ".html")
-app := fiber.New(fiber.Config{
-    Views: viewsEngine,
-})
-app.Static("/static/", "./static")
+package main
+
+import (
+    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/template/html/v2"
+)
+
+func main() {
+
+
+    // Create views engine
+    viewsEngine := html.New("./views", ".html")
+
+
+    // Start new fiber instance
+    app := fiber.New(fiber.Config{
+        Views: viewsEngine,
+    })
+
+    // Static route and directory
+    app.Static("/static/", "./static")
+
+    // Create a "ping" handler to test the server
+    app.Get("/ping", func(ctx *fiber.Ctx) error{
+        return ctx.SendString("Welcome to fiber")
+    })
+
+    // Start the http server
+    app.Listen(":3000")
+
+}
 ```
+
+As seen above, a configuration was added to the app instance and also configured the static route to be `/static/`.
 
 ## 5. Implementing Handlers
 
