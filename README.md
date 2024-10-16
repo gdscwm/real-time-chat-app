@@ -526,6 +526,12 @@ Start the server:
 go run main.go
 ```
 
+or
+
+```bash
+go run .
+```
+
 Visit `http://localhost:3000` in your browser to test the chat application.
 
 ## Conclusion
@@ -538,4 +544,4 @@ Feel free to extend this project by adding features like user authentication, mu
 
 Thanks to FreeCodeCamp for providing the template to this workshop [here](https://www.freecodecamp.org/news/real-time-chat-with-go-fiber-htmx/)!
 
-You can visit the original project repo here: github.com/steelthedev/go-chat
+You can visit the original project repo [here](github.com/steelthedev/go-chat).
