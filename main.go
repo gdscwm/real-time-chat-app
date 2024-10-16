@@ -3,7 +3,7 @@ package main
 import (
     "github.com/gofiber/fiber/v2"
     "github.com/gofiber/template/html/v2"
-	"github.com/jdkuffa/handlers"
+	"github.com/gdscwm/real-time-chat-app/handlers"
 )
 
 func main() {
