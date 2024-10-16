@@ -298,7 +298,7 @@ As seen above, a configuration was added to the app instance and also configured
 
 ## 5. Implementing Handlers
 
-Create a new file and name it `handlers.go`:
+Create a new folder and name it `handlers`. Within it, create a new file and name it `handlers.go`:
 
 ```go
 package handlers
@@ -331,8 +331,10 @@ import (
 
 func main() {
 
+    // Start new fiber instance
     app := fiber.New()
 
+    // Create a "ping" handler to test the server
     app.Get("/ping", func(ctx *fiber.Ctx) error{
         return ctx.SendString("Welcome to fiber")
     })
@@ -343,6 +345,7 @@ func main() {
     // Add appHandler routes
     app.Get("/, appHandler.HandleGetIndex)
 
+    // Start the http server
     app.Listen(":3000")
 }
 ```
