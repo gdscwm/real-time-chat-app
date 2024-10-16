@@ -351,7 +351,7 @@ Above, we created a new app handler and added the `HandleGetIndex` function in t
 
 ## 6. Creating the Message Structure
 
-Create a new file in the project directly and name it message.go. This is how it should look:
+Create a new file in the project directly and name it `message.go`. This is how it should look:
 
 ```go
 package main
