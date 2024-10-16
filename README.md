@@ -17,7 +17,7 @@ Go is particularly good at handling multiple tasks at once (concurrency), which 
 
 Fiber is a web framework for Go. If you've ever used Express.js with Node.js, Fiber will feel familiar. It's designed to make building web applications in Go easier and faster. With Fiber, you can:
 
-- Create routes for your web app (like "/home" or "/about")
+- Create routes for your web app (like "`/home`" or "`/about`")
 - Handle web requests and responses
 - Serve static files (like images or CSS)
 - Use middleware to add extra functionality
@@ -44,7 +44,7 @@ By the end of this workshop, you'll have created a reactive frontend without Jav
 
 ## Prerequisites
 
-- Solid understanding of Go and HTTP servers (optional)
+- Solid understanding of Go and HTTP servers **(optional)**
 - Go installed (version 1.22 or later)
 
 ## Workshop Outline
@@ -60,9 +60,7 @@ By the end of this workshop, you'll have created a reactive frontend without Jav
 
 ## 1. Project Setup
 
-First, install Go by going to this link [here](https://go.dev/doc/install).
-
-Make sure you select the tab for your computer's operating system below, then follow its specific installation instructions.
+First, install Go by going to this link [here](https://go.dev/doc/install). Make sure you select the tab for your computer's operating system below, then follow its specific installation instructions.
 
 After you have verified Go is installed, create a new folder named `go-chat` and initialize your Go module:
 
@@ -94,6 +92,7 @@ package main
 import "github.com/gofiber/fiber/v2"
 
 func main() {
+
     // Start new fiber instance
     app := fiber.New()
 
@@ -107,14 +106,13 @@ func main() {
 }
 ```
 
-This file will be the entry point to the application, in which inside the file we just created a simple web server.
+This file will be the entry point to the application, in which we just created a simple web server inside the file.
 
 Save the file and run `go run main.go` in the terminal to start the web server.
 
 ![_go run command starting the web server_](https://www.freecodecamp.org/news/content/images/2024/06/tuts1-cropped.png)
 
-If you head over to the browser and test the /ping route, there should be a response like this:
-
+If you head over to the browser and test the `/ping` route, there should be a response like this:
 
 ![_/ping route in the browser_](https://www.freecodecamp.org/news/content/images/2024/06/welcome-to-fiber-cropped.png)
 
@@ -122,7 +120,9 @@ If you head over to the browser and test the /ping route, there should be a resp
 
 We'll need static files such as CSS and HTML files for the application to function.
 
-Create `static` and `views` folders. In the `views` folder, create `index.html` and `messages.html`. Here's what the index.html file should look like:
+Create two folders and name them `static` and `views`. In the `views` folder, create `index.html` and `messages.html`. 
+
+Here's what the `index.html` file should look like:
 
 ### index.html
 
@@ -158,14 +158,16 @@ Here's what the `index.html` file should look like:
                     <button type="submit">Send</button>
                 </div>
             </form>
+
         </div>
     </div>
+
 </body>
 
 </html>
 ```
 
-In the `index.html` above, we have linked the necessary plugins such as our `style.css` which will soon be created, HTMX and bootstrap 5.
+In the `index.html` above, we have linked the necessary plugins such as our `style.css` which will soon be created, HTMX and Bootstrap 5.
 
 ### message.html
 
