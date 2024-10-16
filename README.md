@@ -488,13 +488,13 @@ Start the server:
 go run main.go
 ```
 
-Visit `http://localhost:3000` in your browser to test the chat application[1].
+Visit `http://localhost:3000` in your browser to test the chat application.
 
 ## Conclusion
 
-Congratulations! You've built a real-time chat application using Go, Fiber, and HTMX. This project demonstrates how to create a reactive frontend without JavaScript and leverage WebSockets for real-time communication[1].
+Congratulations! You've built a real-time chat application using Go, Fiber, and HTMX. This project demonstrates how to create a reactive frontend without JavaScript and leverage WebSockets for real-time communication.
 
-Feel free to extend this project by adding features like user authentication, multiple chat rooms, or message persistence.
+Feel free to extend this project by adding features like user authentication, multiple chat rooms, or message persistence!
 
 ## Acknowledgments
 
