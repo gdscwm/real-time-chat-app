@@ -24,8 +24,8 @@ func main() {
         return ctx.SendString("Welcome to fiber")
     })
 
-	// create new App Handler
-    appHandler := NewAppHandler()
+	// Create new App Handler
+    appHandler := handlers.NewAppHandler()
 
     // Add appHandler routes
     app.Get("/", appHandler.HandleGetIndex)
