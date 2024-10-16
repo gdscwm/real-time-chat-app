@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html/v2"
-	"github.com/gofiber/websocket/v2"
 	"github.com/gdscwm/real-time-chat-app/handlers"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/websocket/v2"
+	"github.com/gofiber/template/html/v2"
 )
 
 func main() {
@@ -31,7 +31,7 @@ func main() {
 	// Add appHandler routes
 	app.Get("/", appHandler.HandleGetIndex)
 
-	// Create new webscoket
+	// Create new websocket
 	server := NewWebSocket()
 	app.Get("/ws", websocket.New(func(ctx *websocket.Conn) {
 		server.HandleWebSocket(ctx)
