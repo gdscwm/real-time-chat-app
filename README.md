@@ -324,22 +324,17 @@ Update `main.go` to use the new handler:
 package main
 
 import (
-    "github.com/gofiber/fiber/v2"
-    "github.com/gofiber/template/html/v2"
-    "github.com/steelthedev/go-chat/handlers"
+
+    // ...
+
+    "github.com/[your-username]/go-chat/handlers"
 )
 
 func main() {
 
-    // Start new fiber instance
-    app := fiber.New()
+    // ...
 
-    // Create a "ping" handler to test the server
-    app.Get("/ping", func(ctx *fiber.Ctx) error{
-        return ctx.SendString("Welcome to fiber")
-    })
-
-    // create new App Handler
+    // Create new App Handler
     appHandler := NewAppHandler()
 
     // Add appHandler routes
