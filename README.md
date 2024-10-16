@@ -84,7 +84,7 @@ These will install Fiber and other components such as WebSocket and HTML templat
 
 ## 3. Creating the Main Application
 
-Create a `main.go` file in the root directory with a basic Fiber server:
+Create a new file in the root directory with a basic Fiber server and name it `main.go`:
 
 ```go
 package main
@@ -106,7 +106,7 @@ func main() {
 }
 ```
 
-This file will be the entry point to the application, in which we just created a simple web server inside the file.
+This file will be the entry point to the application, in which we just created a simple web server inside of.
 
 Save the file and run `go run main.go` in the terminal to start the web server.
 
@@ -259,7 +259,7 @@ body {
 
 ## 4b. Configuring Static Files
 
-In your `main.go` file, you need to tell Fiber how to handle your static files, most especially the folder to check for HTML rendering. Update main.go as follow:
+In your `main.go` file, you need to tell Fiber how to handle your static files, most especially the folder to check for HTML rendering. Update `main.go` as follow:
 
 ```go
 package main
@@ -270,7 +270,6 @@ import (
 )
 
 func main() {
-
 
     // Create views engine
     viewsEngine := html.New("./views", ".html")
@@ -299,7 +298,7 @@ As seen above, a configuration was added to the app instance and also configured
 
 ## 5. Implementing Handlers
 
-Create a `handlers.go` file:
+Create a new file and name it `handlers.go`:
 
 ```go
 package handlers
@@ -322,8 +321,30 @@ In the code above, we created a handler which received the `AppHandler` struct. 
 Update `main.go` to use the new handler:
 
 ```go
-appHandler := handlers.NewAppHandler()
-app.Get("/", appHandler.HandleGetIndex)
+package main
+
+import (
+    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/template/html/v2"
+    "github.com/steelthedev/go-chat/handlers"
+)
+
+func main() {
+
+    app := fiber.New()
+
+    app.Get("/ping", func(ctx *fiber.Ctx) error{
+        return ctx.SendString("Welcome to fiber")
+    })
+
+    // create new App Handler
+    appHandler := NewAppHandler()
+
+    // Add appHandler routes
+    app.Get("/, appHandler.HandleGetIndex)
+
+    app.Listen(":3000")
+}
 ```
 
 Above, we created a new app handler and added the `HandleGetIndex` function in the routes. Run the `go run main.go` command. On `localhost:3000`, you should have a screen similar to this:
@@ -444,15 +465,34 @@ It also keeps the connection alive. `getMessageTemplate` basically process the m
 Update `main.go` to include WebSocket routes:
 
 ```go
-    // create new webscoket <--here!
+package main
+
+import (
+    "github.com/gofiber/fiber/v2"
+    "github.com/gofiber/template/html/v2"
+    "github.com/gofiber/websocket/v2"
+    "github.com/steelthedev/go-chat/handlers"
+)
+
+func main() {
+
+    app := fiber.New()
+
+    app.Get("/ping", func(ctx *fiber.Ctx) error{
+        return ctx.SendString("Welcome to fiber")
+    })
+
+    appHandler := NewAppHandler()
+
+    app.Get("/, appHandler.HandleGetIndex)
+
+    // Create new webscoket
     server := NewWebSocket()
     app.Get("/ws", websocket.New(func(ctx *websocket.Conn) {
         server.HandleWebSocket(ctx)
     }))
-
     go server.HandleMessages()
 
-    // Start the http server
     app.Listen(":3000")
 }
 ```
