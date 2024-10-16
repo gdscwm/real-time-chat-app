@@ -9,5 +9,6 @@ func NewAppHandler() *AppHandler {
 }
 
 func (a *AppHandler) HandleGetIndex(ctx *fiber.Ctx) error {
-	return ctx.Render("index", fiber.Map{})
+	context := fiber.Map{}
+	return ctx.Render("index", context)
 }
